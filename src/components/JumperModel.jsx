@@ -13,21 +13,15 @@ function Model({ sleeve, showPocket }) {
   const scene = gltf.scene
 
   scene.traverse((child) => {
-    if (child.isMesh) {
-      console.log('Меш:', child.name)
-      child.visible = true
+  if (child.isMesh) {
+    console.log('Меш:', child.name)
+    console.log('→ позиция:', child.position)
+    console.log('→ масштаб:', child.scale)
+    console.log('→ материал:', child.material)
+    child.visible = true
+  }
+})
 
-      if (child.name === 'Sleeve_Short') {
-        child.visible = sleeve === 'short'
-      }
-      if (child.name === 'Sleeve_Long') {
-        child.visible = sleeve === 'long'
-      }
-      if (child.name === 'Pocket_Patch') {
-        child.visible = showPocket
-      }
-    }
-  })
 
   return <primitive object={scene} />
 }
