@@ -11,14 +11,17 @@ function Model({ sleeve, showPocket }) {
   }
 
   const scene = gltf.scene
+scene.scale.set(0.01, 0.01, 0.01)
+scene.position.set(0, -1.2, 0)
+
 
   scene.traverse((child) => {
   if (child.isMesh) {
     console.log('Меш:', child.name)
-    console.log('→ позиция:', child.position)
-    console.log('→ масштаб:', child.scale)
-    console.log('→ материал:', child.material)
+    
     child.visible = true
+    child.material.color.set('hotpink')
+
   }
 })
 
