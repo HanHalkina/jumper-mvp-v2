@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+﻿import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 
@@ -20,9 +20,13 @@ scene.position.set(0, -1.2, 0)
     console.log('Меш:', child.name)
     
     child.visible = true
-    child.material.color.set('hotpink')
-
-  }
+    if (child.material) {
+      child.material.transparent = false
+      child.material.opacity = 1
+      child.material.depthWrite = true
+      child.material.needsUpdate = true
+    
+    }
 })
 
 
