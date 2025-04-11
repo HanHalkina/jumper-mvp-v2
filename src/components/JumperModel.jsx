@@ -1,16 +1,19 @@
-﻿import React, { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+﻿import React, { useEffect, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 
 function Model({ sleeve, showPocket }) {
-  const gltf = useGLTF('/models/jumper_mvp_v2.glb')
-  const sceneRef = useRef()
+  const { scene } = useGLTF('/models/jumper_mvp_v2.glb')
+  const clonedScene = useRef()
 
-  useFrame(() => {
-    if (!sceneRef.current) return
+  useEffect(() => {
+    clonedScene.current = scene.clone(true)
 
-    sceneRef.current.traverse((child) => {
+    clonedScene.current.traverse((child) => {
       if (child.isMesh) {
+        // Включаем всё
+        child.visible = true
+
+        // Переключение видимости
         if (child.name === 'Sleeve_Short') {
           child.visible = sleeve === 'short'
         }
@@ -21,7 +24,8 @@ function Model({ sleeve, showPocket }) {
           child.visible = showPocket
         }
 
-            if (child.material) {
+        // Исправляем прозрачность
+        if (child.material) {
           child.material.transparent = false
           child.material.opacity = 1
           child.material.depthWrite = true
@@ -29,7 +33,9 @@ function Model({ sleeve, showPocket }) {
         }
       }
     })
-  })
+  }, [scene, sleeve, showPocket])
 
-  return <primitive object={gltf.scene} ref={sceneRef} />
+  return clonedScene.current ? <primitive object={clonedScene.current} /> : null
 }
+useGLTF.preload('/models/jumper_mvp_v2.glb')
+
