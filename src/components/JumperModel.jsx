@@ -1,31 +1,34 @@
 ﻿import React, { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, useGLTF } from '@react-three/drei'
+import React, { useEffect } from 'react'
+import { useGLTF } from '@react-three/drei'
 
 function Model({ sleeve, showPocket }) {
   const gltf = useGLTF('/models/jumper_mvp_v2.glb')
-
-  if (!gltf || !gltf.scene) {
-    console.warn('GLB model not loaded yet.')
-    return null
-  }
-
   const scene = gltf.scene
-scene.scale.set(0.01, 0.01, 0.01)
-scene.position.set(0, -1.2, 0)
+
+  useEffect(() => {
+    if (!scene) return
 
 
   scene.traverse((child) => {
   if (child.isMesh) {
-    console.log('Меш:', child.name)
-    
-    child.visible = true
+        child.visible = true
+        if (child.name === 'Sleeve_Short') {
+          child.visible = sleeve === 'short'
+        }
+        if (child.name === 'Sleeve_Long') {
+          child.visible = sleeve === 'long'
+        }
+        if (child.name === 'Pocket_Patch') {
+          child.visible = showPocket
+        }
     if (child.material) {
       child.material.transparent = false
       child.material.opacity = 1
       child.material.depthWrite = true
       child.material.needsUpdate = true
-    
+      }
     }
 })
 
@@ -33,15 +36,7 @@ scene.position.set(0, -1.2, 0)
   return <primitive object={scene} />
 }
 
-export default function JumperModel({ sleeve, showPocket }) {
-  return (
-    <Canvas camera={{ position: [0, 1.2, 3] }}>
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[10, 10, 5]} intensity={1} />
-      <Suspense fallback={null}>
-        <Model sleeve={sleeve} showPocket={showPocket} />
-      </Suspense>
-      <OrbitControls />
-    </Canvas>
-  )
+ }, [scene, sleeve, showPocket])
+
+  return <primitive object={scene} />
 }
