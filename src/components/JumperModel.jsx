@@ -21,8 +21,7 @@ function Model({ sleeve, showPocket }) {
           child.visible = showPocket
         }
 
-        // Фикс прозрачности
-        if (child.material) {
+            if (child.material) {
           child.material.transparent = false
           child.material.opacity = 1
           child.material.depthWrite = true
