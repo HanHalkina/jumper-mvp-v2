@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { useGLTF } from '@react-three/drei'
 
-function Model({ sleeve, showPocket }) {
+function JumperModel({ sleeve, showPocket }) {
   const { scene } = useGLTF('/models/jumper_mvp_v2.glb')
   const [cloned, setCloned] = useState()
 
@@ -44,5 +44,7 @@ function Model({ sleeve, showPocket }) {
 
 
 useGLTF.preload('/models/jumper_mvp_v2.glb')
+export default JumperModel
+
 
 
