@@ -4,56 +4,28 @@ import { OrbitControls, useGLTF } from '@react-three/drei'
 
 function Model({ sleeve, showPocket }) {
   const { scene } = useGLTF('/models/jumper_mvp_v2.glb')
-  const sceneRef = useRef()
+  scene.traverse((r) => {
+  if (r.isMesh) {
+    // Управление видимостью
+    if (r.name === 'Sleeve_Short') {
+      r.visible = sleeve === 'short'
+    } else if (r.name === 'Sleeve_Long') {
+      r.visible = sleeve === 'long'
+    } else if (r.name === 'Pocket_Patch') {
+      r.visible = showPocket
+    } else {
+      r.visible = true
+    }
 
-  const [clonedScene, setClonedScene] = useState()
-
-  useEffect(() => {
-    if (!scene) return
-    const clone = scene.clone(true)
-
-    clone.traverse((child) => {
-      if (child.isMesh) {
-        // Управление мешами
-        if (child.name === 'Sleeve_Short') {
-          child.visible = sleeve === 'short'
-        }
-        if (child.name === 'Sleeve_Long') {
-          child.visible = sleeve === 'long'
-        }
-        if (child.name === 'Pocket_Patch') {
-          child.visible = showPocket
-        }
-
-        // Материалы
-        if (child.material) {
-          child.material.transparent = false
-          child.material.opacity = 1
-          child.material.depthWrite = true
-          child.material.needsUpdate = true
-          console.log(`Рукав: ${sleeve}, Карман: ${showPocket}`)
-
-child.traverse((child) => {
-  if (child.isMesh) {
-    console.log(`→ ${child.name}, visible = ${child.visible}`)
-
-    // отладка условий:
-    if (child.name === 'Sleeve_Short') console.log('=> Это короткий рукав')
-    if (child.name === 'Sleeve_Long') console.log('=> Это длинный рукав')
-    if (child.name === 'Pocket_Patch') console.log('=> Это карман')
+    // Защита от прозрачности
+    if (r.material) {
+      r.material.transparent = false
+      r.material.opacity = 1
+      r.material.depthWrite = true
+      r.material.needsUpdate = true
+    }
   }
 })
-
-        }
-      }
-    })
-
-    // Устанавливаем масштаб и позицию
-    clone.scale.set(0.01, 0.01, 0.01)
-    clone.position.set(0, -1.2, 0)
-
-    setClonedScene(clone)
-  }, [scene, sleeve, showPocket])
 
   return clonedScene ? <primitive object={clonedScene} ref={sceneRef} /> : null
 }
